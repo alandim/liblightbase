@@ -112,13 +112,13 @@ class BaseMetadata(object):
 
     @property
     def admin_users(self):
-        """ @property owner getter
+        """ @property admin_users getter
         """
         return self._admin_users
 
     @admin_users.setter
     def admin_users(self, value):
-        """ @property owner setter
+        """ @property admin_users setter
         """
         msg = 'admin_users value must be a list!'
         assert(isinstance(value, list)), msg
