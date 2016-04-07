@@ -11,7 +11,7 @@ class BaseMetadata(object):
 
     def __init__(self, name=None, description='', password='', color='',
         model=None, dt_base=None, id_base=0, idx_exp=False , idx_exp_url='',
-        idx_exp_time=300, file_ext=False, file_ext_time=300, owner=''):
+        idx_exp_time=300, file_ext=False, file_ext_time=300, owner='', access_users=None):
 
         """ Base Metadata Attributes
         """
