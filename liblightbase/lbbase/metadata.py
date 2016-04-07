@@ -11,7 +11,7 @@ class BaseMetadata(object):
 
     def __init__(self, name=None, description='', password='', color='',
         model=None, dt_base=None, id_base=0, idx_exp=False , idx_exp_url='',
-        idx_exp_time=300, file_ext=False, file_ext_time=300, owner='', access_users=None):
+        idx_exp_time=300, file_ext=False, file_ext_time=300, owner='', admin_users=None):
 
         """ Base Metadata Attributes
         """
@@ -63,6 +63,9 @@ class BaseMetadata(object):
         # @param owner: Owner of the base, means that can do all operation in the base.
         self.owner = owner
 
+        # @param owner: Owner of the base, means that can do all operation in the base.
+        self.admin_users = admin_users
+
     @property
     def name(self):
         """ @property name getter
@@ -106,6 +109,20 @@ class BaseMetadata(object):
         msg = 'Owner of the base must be string or unicode'
         assert(isinstance(value, PYSTR)), msg
         self._owner = value
+
+    @property
+    def admin_users(self):
+        """ @property owner getter
+        """
+        return self._admin_users
+
+    @admin_users.setter
+    def admin_users(self, value):
+        """ @property owner setter
+        """
+        msg = 'admin_users value must be a list!'
+        assert(isinstance(value, list)), msg
+        self._admin_users = value
 
     @property
     def id_base(self):
@@ -257,7 +274,8 @@ class BaseMetadata(object):
             'idx_exp_time': self.idx_exp_time,
             'file_ext': self.file_ext,
             'file_ext_time': self.file_ext_time,
-            'owner': self.owner
+            'owner': self.owner,
+            'admin_users': self.admin_users
         }
 
     @property
