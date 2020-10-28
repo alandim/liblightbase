@@ -3,6 +3,7 @@ import sys
 PY3 = sys.version_info[0] == 3
 
 if PY3:
+    # delete path - get(self, base)
     PYSTR = str
     PYUNICODE = str
 else:
@@ -19,7 +20,9 @@ RESERVED_STRUCT_NAMES = [
     #'struct',
     #'dt_base',
     #'idx_exp',
+    #'admin_users',
     #'idx_exp_url',
+    #'owner',
     #'idx_exp_time',
     #'file_ext',
     #'file_ext_time',

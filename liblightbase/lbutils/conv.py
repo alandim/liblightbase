@@ -16,7 +16,6 @@ def json2base(jsonobj):
     """
     return dict2base(dictobj=lbutils.json2object(jsonobj))
 
-
 def base2json(base):
     """
     Convert a liblightbase.lbbase.struct.Base object to JSON string.
@@ -43,10 +42,10 @@ def document2json(base, document, **kw):
 
 
 def dict2base(dictobj):
-    """
-    Convert dictionary object to Base object
+    """ Convert dictionary object to Base object
     @param dictobj: dictionary object
     """
+
     def assemble_content(content_object, dimension=0, parent_path=[]):
         """
         Parses content object and builds a list with Field and Group objects
@@ -56,22 +55,24 @@ def dict2base(dictobj):
         content_list = Content()
         for obj in content_object:
             if obj.get('group'):
+                this_path = parent_path[:]
                 group_metadata = GroupMetadata(**obj['group']['metadata'])
+                this_path.append(group_metadata.name)
+                child_path = this_path[:]
                 _dimension = dimension
                 if group_metadata.multivalued:
                     _dimension += 1
                 if group_metadata.multivalued:
-                    parent_path.append('*')
-                parent_path.append(group_metadata.name)
+                    child_path.append('*')
                 group_content = assemble_content(
                     obj['group']['content'],
                     dimension=_dimension,
-                    parent_path=parent_path)
+                    parent_path=child_path)
                 group = Group(
                     metadata=group_metadata,
                     content=group_content)
                 content_list.append(group)
-                group.path = parent_path
+                group.path = this_path
             elif obj.get('field'):
                 field = Field(**obj['field'])
                 if field.multivalued:
@@ -86,7 +87,6 @@ def dict2base(dictobj):
     base = Base(metadata=BaseMetadata(**dictobj['metadata']),
         content=assemble_content(dictobj['content']))
     return base
-
 
 def dict2document(base, dictobj, metaclass=None):
     """
@@ -223,7 +223,6 @@ def attribute2lbfield(attr_name, attr_type, attr_value):
             lbtype = 'Text'
             if len(attr_value) > 0:
                 lbtype = pytypes.pytype2lbtype(type(attr_value[0]))
-                #print(type(attr_value[0]))
                 try:
                     content_list = Content()
                     for group_elm in attr_value[0].__dict__.keys():
@@ -261,7 +260,6 @@ def attribute2lbfield(attr_name, attr_type, attr_value):
                             metadata=group_metadata,
                             content=content_list)
 
-            #print(lbtype)
             return Field(
                 name=attr_name,
                 description=attr_name,
@@ -279,3 +277,25 @@ def attribute2lbfield(attr_name, attr_type, attr_value):
                 indices = ['Textual'],
                 multivalued = False,
                 required = False)
+
+class dict2genericbase(object):
+    """ Convert um dicionário Python para um objeto Python.
+        @return: generic object
+    """
+    def __init__(self, d):
+        for a, b in d.items():
+            if isinstance(b, (list, tuple)):
+               setattr(self, a, [dict2genericbase(x) if isinstance(x, dict) else x for x in b])
+            else:
+               setattr(self, a, dict2genericbase(b) if isinstance(b, dict) else b)
+
+    def __repr__(self):
+        return str(self.__dict__)
+
+    def __str__(self):
+        return str(self.__dict__)
+
+    @property
+    def json(self):
+        return lbutils.object2json(self, default=lambda o: o.__dict__)
+

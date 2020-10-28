@@ -10,9 +10,9 @@ class BaseMetadata(object):
     """
 
     def __init__(self, name=None, description='', password='', color='',
-        model=None, dt_base=None, id_base=0, idx_exp=False , idx_exp_url='',
-        idx_exp_time=300, file_ext=False, file_ext_time=300, owner='', admin_users=[]):
-
+        model=None, dt_base=None, id_base=0, idx_exp=False , admin_users=[], 
+        idx_exp_url='', owner='', idx_exp_time=300, file_ext=False, file_ext_time=300, 
+        txt_mapping=''):
         """ Base Metadata Attributes
         """
 
@@ -42,11 +42,19 @@ class BaseMetadata(object):
         # this flag is true. The index engine is external to this API.
         self.idx_exp = idx_exp
 
+        # @param admin_users: List of users with access. List of users with 
+        # access to the base. This parameter is used by LBA - LBApp.
+        self.admin_users = admin_users
+
         # @param idx_exp_url: Index exportaction URI (Uniform Resource Locator).
         # Identifier used to index the documents. Accepted format is:
         # http://<IP>:<PORT>/<INDEX>/<TYPE>. If @param idx_exp is true, when
         # inserting a document to base, a HTTP request is sent to this URI.
         self.idx_exp_url = idx_exp_url
+
+        # @param owner: Owner of the base. This parameter is used by 
+        # LBA - LBApp.
+        self.owner = owner
 
         # @param idx_exp_time: Index exportaction time. Time in seconds used by 
         # asynchronous indexer to sleep beetwen the indexing processes.
@@ -60,11 +68,8 @@ class BaseMetadata(object):
         # asynchronous extractor to sleep beetwen the extracting processes.
         self.file_ext_time = file_ext_time
 
-        # @param owner: Owner of the base, means that can do all operation in the base.
-        self.owner = owner
-
-        # @param owner: Owner of the base, means that can do all operation in the base.
-        self.admin_users = admin_users
+        # @param txt_mapping: .
+        self.txt_mapping = txt_mapping
 
     @property
     def name(self):
@@ -111,20 +116,6 @@ class BaseMetadata(object):
         self._owner = value
 
     @property
-    def admin_users(self):
-        """ @property admin_users getter
-        """
-        return self._admin_users
-
-    @admin_users.setter
-    def admin_users(self, value):
-        """ @property admin_users setter
-        """
-        msg = 'admin_users value must be a list!'
-        assert(isinstance(value, list)), msg
-        self._admin_users = value
-
-    @property
     def id_base(self):
         """ @property id_base getter
         """
@@ -151,6 +142,7 @@ class BaseMetadata(object):
         if isinstance(value, datetime.datetime):
             self._dt_base = value
         elif value is None:
+
             # Default to now
             self._dt_base = datetime.datetime.now()
         else:
@@ -181,6 +173,23 @@ class BaseMetadata(object):
             self._idx_exp = value
 
     @property
+    def admin_users(self):
+        """ @property admin_users getter
+        """
+        return self._admin_users
+
+    @admin_users.setter
+    def admin_users(self, value):
+        """ @property admin_users setter
+        """
+        try:
+            assert(isinstance(value, list))
+        except AssertionError:
+            raise ValueError('admin_users value must be list!')
+        else:
+            self._admin_users = value
+
+    @property
     def idx_exp_url(self):
         """ @property idx_exp_url getter
         """
@@ -190,17 +199,22 @@ class BaseMetadata(object):
     def idx_exp_url(self, value):
         """ @property idx_exp_url setter
         """
-        if value is not None:
-            assert isinstance(value, PYSTR)
-        if self.idx_exp:
-            url = lbutils.validate_url(value)
-            if len(url.split('/')) is not 5:
-                raise ValueError('''idx_exp_url must have the following format:
-                    http://host:port/index_name/type_name But received: %s''' %
-                    str(url))
-            self._idx_exp_url = value
-        else:
-            self._idx_exp_url = value
+        self._idx_exp_url = value
+
+        # TODO: Validação da URL do ES. Revisar... Se não mais necessário, remover!
+        # By Questor
+        # if value is not None:
+        #     assert isinstance(value, PYSTR)
+            
+        # if self.idx_exp:
+        #     url = lbutils.validate_url(value)
+        #     if len(url.split('/')) is not 5:
+        #         raise ValueError('''idx_exp_url must have the following format:
+        #             http://host:port/index_name/type_name But received: %s''' %
+        #             str(url))
+        #     self._idx_exp_url = value
+        # else:
+        #     self._idx_exp_url = value
 
     @property
     def idx_exp_time(self):
@@ -211,6 +225,7 @@ class BaseMetadata(object):
     @idx_exp_time.setter
     def idx_exp_time(self, value):
         if value is None:
+
             # Default to 300 seconds
             self._idx_exp_time = 300
         else:
@@ -230,6 +245,7 @@ class BaseMetadata(object):
     @file_ext.setter
     def file_ext(self, value):
         if value is None:
+
             # Default to false 
             self._file_ext = False
         else:
@@ -248,6 +264,7 @@ class BaseMetadata(object):
         """ @property file_ext_time setter
         """
         if value is None:
+
             # Default to 300 seconds
             self._file_ext_time=300
         else:
@@ -270,12 +287,13 @@ class BaseMetadata(object):
             'password': self.password,
             'color': self.color,
             'idx_exp': self.idx_exp,
+            'admin_users': self.admin_users,
             'idx_exp_url': self.idx_exp_url,
+            'owner': self.owner,
             'idx_exp_time': self.idx_exp_time,
             'file_ext': self.file_ext,
             'file_ext_time': self.file_ext_time,
-            'owner': self.owner,
-            'admin_users': self.admin_users
+            'txt_mapping': self.txt_mapping
         }
 
     @property

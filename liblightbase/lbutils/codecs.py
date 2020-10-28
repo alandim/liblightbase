@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import json
 import datetime
 
@@ -10,6 +13,7 @@ JSON_TYPES = (
     type(None)   # null
 )
 
+
 # ********************************** 
 # * Document default encode/decode *
 # ********************************** 
@@ -21,16 +25,25 @@ class DocumentJSONEncoder(json.JSONEncoder):
 
         if isinstance(obj, datetime.datetime):
             obj = obj.strftime('%d/%m/%Y %H:%M:%S')
-
         elif isinstance(obj, datetime.time):
             obj = obj.strftime('%H:%M:%S')
-
         elif isinstance(obj, datetime.date):
             obj = obj.strftime('%d/%m/%Y')
-
         else:
-            # method to generate JSON
-            obj = obj._encoded()
+
+            # NOTE: SINCERAMENTE só um SANTO para entender como esse CARALHO
+            # funciona! Passe o dia depurando essa MERDA! Por INFERÊNCIA DIVINA
+            # descobri que quando o tipo for 
+            # "<class 'liblightbase.lbutils.conv.dict2genericbase'>" então
+            # devemos retornar ".__dict__" e era aí que residia um bug!
+            # By Questor
+            if "<class 'liblightbase.lbutils.conv.dict2genericbase'>" in\
+                    str(obj.__class__):
+                obj = obj.__dict__
+            else:
+
+                # NOTE: Method to generate JSON! By Mr Who
+                obj = obj._encoded()
 
         return obj
 
@@ -48,6 +61,7 @@ def object2json(value, ensure_ascii=False, **kwargs):
         This method receives a Python object JSON oject and tries to convert it
         to JSON oject. 
     """
+
     return json.dumps(value,
                      ensure_ascii=ensure_ascii,
                      cls=DocumentJSONEncoder,
@@ -78,4 +92,3 @@ def json2object(value, **kwargs):
         except Exception as e:
             # JSON loading was not possible
             raise e.__class__('Could not parse JSON data: %s' % e)
-
