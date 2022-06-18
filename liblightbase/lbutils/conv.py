@@ -95,12 +95,26 @@ def dict2document(base, dictobj, metaclass=None):
     @param dictobj: dictionary object.
     @param metaclass: GroupMetaClass in question.
     """
+
     kwargs = {}
     if metaclass is None:
         metaclass = base.metaclass()
         if dictobj.get('_metadata'):
             kwargs['_metadata'] = DocumentMetadata(**dictobj.pop('_metadata'))
+        # NOTE: Essas variáveis chegam aqui quando um registro está no Redis e não
+        # é necessário buscar ele do banco de dados. É necessário removê-las porque
+        # elas não fazem parte da estrutura da base. By Coimbroso
+        if dictobj.get('lbr_rg_metadata'):
+            dictobj.pop('lbr_rg_metadata')
+        if dictobj.get('lbr_rg_id'):
+            dictobj.pop('lbr_rg_id')
     for member in dictobj:
+        # NOTE: Essas variáveis chegam aqui quando um registro está no Redis e não
+        # é necessário buscar ele do banco de dados. Esse "if" evita que ocorra
+        # um erro porque campos multivalorados e campos de grupo vão estar com nomes
+        # diferentes da estrutura da base. By Coimbroso
+        if "." in member or "#" in member:
+            continue
         struct = base.get_struct(member)
         if struct.is_field:
             kwargs[member] = dictobj[member]

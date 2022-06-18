@@ -12,7 +12,7 @@ from liblightbase.tests import lbjson_test
 
 class LBRestTestCase(lbjson_test.TestJSON):
     """
-    Test LBGenerator communication library
+    Test lbgenerator communication library
     """
     def setUp(self):
         """

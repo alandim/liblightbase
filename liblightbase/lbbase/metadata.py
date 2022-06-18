@@ -9,10 +9,10 @@ class BaseMetadata(object):
     often classified as resource discovery.
     """
 
-    def __init__(self, name=None, description='', password='', color='',
+    def __init__(self, name=None, alias='', description='', password='', color='',
         model=None, dt_base=None, id_base=0, idx_exp=False , admin_users=[], 
         idx_exp_url='', owner='', idx_exp_time=300, file_ext=False, file_ext_time=300, 
-        txt_mapping=''):
+        txt_mapping='', locked=False):
         """ Base Metadata Attributes
         """
 
@@ -20,6 +20,9 @@ class BaseMetadata(object):
         # separated by underscore. Also should be a unique constraint, to ensure
         # all bases names will be unique.
         self.name = name
+
+        # @param alias: The base alias.
+        self.alias = alias
 
         # @param description: The base longer description.
         self.description = description
@@ -68,6 +71,9 @@ class BaseMetadata(object):
         # asynchronous extractor to sleep beetwen the extracting processes.
         self.file_ext_time = file_ext_time
 
+        # @param locked: Flag used to indicate if the base is locked for maintenance.
+        self.locked = locked
+
         # @param txt_mapping: .
         self.txt_mapping = txt_mapping
 
@@ -86,6 +92,20 @@ class BaseMetadata(object):
         # check ascii characters
         assert all(ord(c) < 128 for c in value), msg
         self._name = str(value).lower()
+
+    @property
+    def alias(self):
+        """ @property alias getter
+        """
+        return self._alias
+
+    @alias.setter
+    def alias(self, value):
+        """ @property alias setter
+        """
+        msg = 'Base alias must be string or unicode!'
+        assert(isinstance(value, PYSTR)), msg
+        self._alias= value
 
     @property
     def description(self):
@@ -254,6 +274,23 @@ class BaseMetadata(object):
             self._file_ext = value
 
     @property
+    def locked(self):
+        """ @property locked getter
+        """
+        return self._locked
+
+    @locked.setter
+    def locked(self, value):
+        if value is None:
+
+            # Default to false 
+            self._locked = False
+        else:
+            msg = 'locked value must be boolean!'
+            assert isinstance(value, bool), msg
+            self._locked = value
+
+    @property
     def file_ext_time(self):
         """ @property file_ext_time getter
         """
@@ -281,6 +318,7 @@ class BaseMetadata(object):
         """
         return {
             'name': self.name,
+            'alias': self.alias,
             'description': self.description,
             'id_base': self.id_base,
             'dt_base': self.dt_base,
@@ -292,6 +330,7 @@ class BaseMetadata(object):
             'owner': self.owner,
             'idx_exp_time': self.idx_exp_time,
             'file_ext': self.file_ext,
+            'locked': self.locked,
             'file_ext_time': self.file_ext_time,
             'txt_mapping': self.txt_mapping
         }

@@ -3,7 +3,7 @@
 rm -rf /var/log/lb?.log
 cd "/usr/local/lb/lb?_ve??/src/liblightbase"
 /usr/local/lb/lb?_ve??/bin/python? setup.py install
-cd "/usr/local/lb/lb?_ve??/src/LBGenerator"
+cd "/usr/local/lb/lb?_ve??/src/lbgenerator"
 /usr/local/lb/lb?_ve??/bin/python? setup.py install
 service nginx stop
 service uwsgi stop

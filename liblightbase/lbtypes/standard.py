@@ -137,10 +137,7 @@ class Date(BaseDataType):
         return value
 
     def validate(self, value):
-        if value == '':
-            self.__obj__ = value
-        else:
-            self.__obj__ = datetime.datetime.strptime(value, '%d/%m/%Y').date()
+        self.__obj__ = value
         return value
 
 class Time(BaseDataType):
@@ -153,10 +150,7 @@ class Time(BaseDataType):
         return value
 
     def validate(self, value):
-        if value == '':
-            self.__obj__ = value
-        else:
-            self.__obj__ = datetime.datetime.strptime(value, '%H:%M:%S').time()
+        self.__obj__ = value
         return value
 
 class DateTime(BaseDataType):
@@ -169,11 +163,9 @@ class DateTime(BaseDataType):
         return value
 
     def validate(self, value):
-        if value == '':
-            self.__obj__ = value
-        else:
-            self.__obj__ = datetime.datetime.strptime(value, '%d/%m/%Y %H:%M:%S')
+        self.__obj__ = value
         return value
+
 
 class Url(BaseDataType):
     """ Represents an Url Field """
