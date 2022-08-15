@@ -132,7 +132,7 @@ class BaseMetadata(object):
         """ @property owner setter
         """
         msg = 'Owner of the base must be string or unicode'
-        assert(isinstance(value, PYSTR)), msg
+        assert(isinstance(value, int)), msg
         self._owner = value
 
     @property
