@@ -131,7 +131,7 @@ class BaseMetadata(object):
     def owner(self, value):
         """ @property owner setter
         """
-        msg = 'id_base value must be integer!'
+        msg = 'owner value must be integer!'
         assert(isinstance(value, int)), msg
         self._owner = value
 
