@@ -11,7 +11,7 @@ class BaseMetadata(object):
 
     def __init__(self, name=None, alias='', description='', password='', color='',
         model=None, dt_base=None, id_base=0, idx_exp=False , admin_users=[], 
-        idx_exp_url='', owner='', idx_exp_time=300, file_ext=False, file_ext_time=300, 
+        idx_exp_url='', owner=0, idx_exp_time=300, file_ext=False, file_ext_time=300, 
         txt_mapping='', locked=False):
         """ Base Metadata Attributes
         """
@@ -131,7 +131,7 @@ class BaseMetadata(object):
     def owner(self, value):
         """ @property owner setter
         """
-        msg = 'Owner of the base must be string or unicode'
+        msg = 'id_base value must be integer!'
         assert(isinstance(value, int)), msg
         self._owner = value
 
