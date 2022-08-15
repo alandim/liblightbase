@@ -131,6 +131,7 @@ class BaseMetadata(object):
     def owner(self, value):
         """ @property owner setter
         """
+        #uncomment the line below after the migration
         #msg = 'owner value must be integer!'
         #assert(isinstance(value, int)), msg
         self._owner = value
